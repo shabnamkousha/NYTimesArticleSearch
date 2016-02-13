@@ -61,4 +61,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:checked="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date"
+        android:id="@+id/tvDate"
+        android:layout_below="@+id/cbSports"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/cbArts"
+        android:layout_alignEnd="@+id/cbArts"
+        android:onClick="showTimePickerDialog" />
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package lab.com.nytimesarticlesearch;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,10 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class SettingActivity extends AppCompatActivity {
+import java.util.Calendar;
+
+public class SettingActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
     Spinner sortOrder;
     Filters filters;
@@ -20,6 +25,7 @@ public class SettingActivity extends AppCompatActivity {
     CheckBox cbArts;
     CheckBox cbFashin;
     CheckBox cbSports;
+    TextView tvDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,7 @@ public class SettingActivity extends AppCompatActivity {
         cbArts=  (CheckBox) findViewById(R.id.cbArts);
         cbFashin=  (CheckBox) findViewById(R.id.cbFashin);
         cbSports=  (CheckBox) findViewById(R.id.cbSports);
+        tvDate=  (TextView) findViewById(R.id.tvDate);
 
         aSortAdapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_array, android.R.layout.simple_spinner_item);
@@ -58,6 +65,14 @@ public class SettingActivity extends AppCompatActivity {
         }
         if(fq.contains("Fashion")){
             cbFashin.setChecked(true);
+        }
+        Calendar calendar=filters.getBeginDate();
+        if(calendar!=null) {
+            String calendarYear =String.valueOf(calendar.get(Calendar.YEAR));
+            String calendarMonth = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+            String calendarDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            tvDate.setText(calendarMonth+"/"+ calendarDay + "/"+calendarYear) ;
+            // Toast.makeText(this, "After: " +calendarMonth, Toast.LENGTH_LONG).show();
         }
 
 
@@ -88,6 +103,26 @@ public class SettingActivity extends AppCompatActivity {
 
         setResult(RESULT_OK, data);
         finish();
+    }
+
+    // attach to an onclick handler to show the date picker
+    public void showTimePickerDialog(View v) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    // handle the date selected
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        // store the values selected into a Calendar instance
+        final Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, monthOfYear);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        String chosenDate=String.valueOf(monthOfYear+1)+"/"+String.valueOf(dayOfMonth)+"/"+String.valueOf(year);
+        tvDate.setText(chosenDate);
+        filters.setBeginDate(c);
     }
 
 }

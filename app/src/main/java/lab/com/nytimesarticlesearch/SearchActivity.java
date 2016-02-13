@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -107,13 +108,22 @@ public class SearchActivity extends AppCompatActivity {
 
         String sortOrder=filters.getSortOrder();
         String fq=filters.getQuote();
+        Calendar calendar=filters.getBeginDate();
+
 
         RequestParams params=new RequestParams();
         params.put("api-key","44df8b918e4cde4c7dcfbd6473346627:7:74373173");
         params.put("page","0");
         params.put("sort",sortOrder.toLowerCase());
+        if(calendar!=null) {
+            String calendarYear = String.valueOf(calendar.get(Calendar.YEAR));
+            String calendarMonth = String.format("%02d", calendar.get(Calendar.MONTH)+1);
+            String calendarDay = String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH));
+            params.put("begin_date",calendarYear+calendarMonth+calendarDay);
+           // Toast.makeText(this, "After: " +calendarMonth, Toast.LENGTH_LONG).show();
+        }
+
         if(fq.length()>0) {
-            //String fq = "Fashion & Style";
            params.put("fq", "news_desk:(" + fq + ")");
         }
         params.put("q", query);
@@ -146,7 +156,7 @@ public class SearchActivity extends AppCompatActivity {
 
             filters = (Filters) aDataSet.getExtras().getSerializable("new_filters");
 
-            Toast.makeText(this, "After: " + filters.getSortOrder(), Toast.LENGTH_LONG).show();
+           // Toast.makeText(this, "After: " + filters.getSortOrder(), Toast.LENGTH_LONG).show();
 
         }
     }
