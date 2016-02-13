@@ -4,4 +4,10 @@
     <string name="title_activity_article">ArticleActivity</string>
     <string name="hint">Enter Search Query</string>
     <string name="search">Search</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="submit_filter">Save</string>
+    <string-array name="sort_array">
+        <item>Newest</item>
+        <item>Oldest</item>
+    </string-array>
 </resources>

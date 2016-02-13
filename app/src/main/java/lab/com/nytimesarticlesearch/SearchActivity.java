@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -34,6 +35,7 @@ public class SearchActivity extends AppCompatActivity {
     Button btnSearch;
     ArrayList<Article> articls;
     ArticleArrayAdapter adapter;
+    Filters filters = new Filters("wow","newest");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,10 @@ public class SearchActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Toast.makeText(this, "Result:" + filters.getQuote(), Toast.LENGTH_LONG).show();
+
         setupViews();
+
     }
 
     @Override
@@ -61,6 +66,13 @@ public class SearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            Intent i = new Intent(SearchActivity.this, SettingActivity.class);
+
+            i.putExtra("filters", filters);
+
+            startActivityForResult(i, 1);
+
             return true;
         }
 
@@ -88,30 +100,52 @@ public class SearchActivity extends AppCompatActivity {
 
     public void onArticleSearch(View view) {
         String query=etQuery.getText().toString();
-        //Toast.makeText(this, "Result:" + query, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Result:" + query, Toast.LENGTH_LONG).show();
         AsyncHttpClient client = new AsyncHttpClient();
 
         String url="http://api.nytimes.com/svc/search/v2/articlesearch.json";
 
+        String sortOrder=filters.getSortOrder();
+
         RequestParams params=new RequestParams();
         params.put("api-key","44df8b918e4cde4c7dcfbd6473346627:7:74373173");
         params.put("page","0");
-        params.put("q",query);
+        params.put("sort",sortOrder.toLowerCase());
+        params.put("q", query);
 
-        client.get(url,params, new JsonHttpResponseHandler(){
+        client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-                JSONArray articleJsonResults=null;
+                JSONArray articleJsonResults = null;
                 try {
-                    articleJsonResults=response.getJSONObject("response").getJSONArray("docs");
-                    adapter.addAll(Article.fromJsonArray(articleJsonResults));
-
+                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                    articls.clear();
+                    articls.addAll(Article.fromJsonArray(articleJsonResults));
+                    adapter.notifyDataSetChanged();
                     Log.d("DEBUG", articls.toString());
-                } catch(JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
     }
+
+
+
+
+    @Override
+    protected void onActivityResult(int aRequestCode, int aResultCode, Intent aDataSet) {
+        // REQUEST_CODE is defined above
+        if (aResultCode == RESULT_OK && aRequestCode == 1) {
+
+            filters = (Filters) aDataSet.getExtras().getSerializable("new_filters");
+
+            Toast.makeText(this, "After: " + filters.getSortOrder(), Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+
+
 }
