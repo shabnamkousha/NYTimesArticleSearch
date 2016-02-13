@@ -35,7 +35,7 @@ public class SearchActivity extends AppCompatActivity {
     Button btnSearch;
     ArrayList<Article> articls;
     ArticleArrayAdapter adapter;
-    Filters filters = new Filters("wow","newest");
+    Filters filters = new Filters("","newest");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +106,16 @@ public class SearchActivity extends AppCompatActivity {
         String url="http://api.nytimes.com/svc/search/v2/articlesearch.json";
 
         String sortOrder=filters.getSortOrder();
+        String fq=filters.getQuote();
 
         RequestParams params=new RequestParams();
         params.put("api-key","44df8b918e4cde4c7dcfbd6473346627:7:74373173");
         params.put("page","0");
         params.put("sort",sortOrder.toLowerCase());
+        if(fq.length()>0) {
+            //String fq = "Fashion & Style";
+           params.put("fq", "news_desk:(" + fq + ")");
+        }
         params.put("q", query);
 
         client.get(url, params, new JsonHttpResponseHandler() {

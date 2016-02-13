@@ -6,6 +6,9 @@
     <string name="search">Search</string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="submit_filter">Save</string>
+    <string name="arts">Arts</string>
+    <string name="fashion"><![CDATA[Fashion & Style]]></string>
+    <string name="sports">Sports</string>
     <string-array name="sort_array">
         <item>Newest</item>
         <item>Oldest</item>
