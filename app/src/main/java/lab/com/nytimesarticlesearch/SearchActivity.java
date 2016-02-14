@@ -97,8 +97,63 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-    }
 
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                customLoadMoreDataFromApi(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
+            }
+        });
+    }
+    public void customLoadMoreDataFromApi(int offset) {
+        String query=etQuery.getText().toString();
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        String url="http://api.nytimes.com/svc/search/v2/articlesearch.json";
+
+        String sortOrder=filters.getSortOrder();
+        String fq=filters.getQuote();
+        Calendar calendar=filters.getBeginDate();
+
+
+        RequestParams params=new RequestParams();
+        params.put("api-key","44df8b918e4cde4c7dcfbd6473346627:7:74373173");
+        params.put("page", offset);
+        params.put("sort",sortOrder.toLowerCase());
+        if(calendar!=null) {
+            String calendarYear = String.valueOf(calendar.get(Calendar.YEAR));
+            String calendarMonth = String.format("%02d", calendar.get(Calendar.MONTH)+1);
+            String calendarDay = String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH));
+            params.put("begin_date",calendarYear+calendarMonth+calendarDay);
+            // Toast.makeText(this, "After: " +calendarMonth, Toast.LENGTH_LONG).show();
+        }
+
+        if(fq.length()>0) {
+            params.put("fq", "news_desk:(" + fq + ")");
+        }
+        params.put("q", query);
+
+        client.get(url, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                JSONArray articleJsonResults = null;
+                try {
+                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                    //articls.clear();
+                    articls.addAll(Article.fromJsonArray(articleJsonResults));
+                    adapter.notifyDataSetChanged();
+                    Log.d("DEBUG", articls.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     public void onArticleSearch(View view) {
         String query=etQuery.getText().toString();
         Toast.makeText(this, "Result:" + query, Toast.LENGTH_LONG).show();
