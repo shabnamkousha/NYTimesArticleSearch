@@ -156,7 +156,6 @@ public class SearchActivity extends AppCompatActivity {
     }
     public void onArticleSearch(View view) {
         String query=etQuery.getText().toString();
-        Toast.makeText(this, "Result:" + query, Toast.LENGTH_LONG).show();
         AsyncHttpClient client = new AsyncHttpClient();
 
         String url="http://api.nytimes.com/svc/search/v2/articlesearch.json";
