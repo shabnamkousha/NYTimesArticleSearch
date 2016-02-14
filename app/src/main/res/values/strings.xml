@@ -9,7 +9,10 @@
     <string name="arts">Arts</string>
     <string name="fashion"><![CDATA[Fashion & Style]]></string>
     <string name="sports">Sports</string>
-    <string name="date">Click to choose date</string>
+    <string name="sort_label">Sort Order:</string>
+    <string name="date">Choose date</string>
+    <string name="begin_date_label">Begin Date:</string>
+    <string name="category_label">Article Category:</string>
     <string-array name="sort_array">
         <item>Newest</item>
         <item>Oldest</item>
